@@ -1,0 +1,31 @@
+____________________________________________________________________________________________________________________
+// <-- ONE TO MANY RELATION -->
+
+// Owner of the relation -- Method in Doctor entity
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "doctor")
+    @JsonManagedReference  // Ejer af relationen
+    @JsonIgnore
+    private List<Appointment> appointments = new ArrayList<>();
+
+// Inverse side of the relation - Method in Appointment entity
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "doctor_id")
+    @JsonBackReference
+    private Doctor doctor;
+
+____________________________________________________________________________________________________________________
+// <-- MANY TO MANY RELATION-->
+
+// Owner of the relation - Method in Doctor entity
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "doctor_specialty",
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            inverseJoinColumns = @JoinColumn(name = "specialty_id"))
+    @JsonManagedReference
+    private List<Specialty> specialties = new ArrayList<>();
+
+// Inverse side of the relation - Method in Specialty entity
+    @ManyToMany(mappedBy = "specialties")
+    @JsonBackReference
+    private List<Doctor> doctors = new ArrayList<>();
+

@@ -1,0 +1,116 @@
+### -- SIMPLE TEST --
+### Her tester vi et simpelt endpoint
+GET http://localhost:7070/api/auth/test/
+
+### -- SECYRETY --
+### Her opretter vi en bruger med en user rolle
+POST http://localhost:7070/api/auth/register/
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "test123"
+}
+
+### Her logger vi ind med brugeren
+POST http://localhost:7070/api/auth/login/
+
+{
+    "username": "user",
+    "password": "test123"
+}
+
+> {%
+    client.global.set("jwt_token", response.body.token);
+    console.log("JWT Token:", client.global.get("jwt_token"));
+%}
+
+### Her opretter vi en bruger med en admin rolle
+POST http://localhost:7070/api/auth/register/
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+> {%
+    client.global.set("jwt_token", response.body.token);
+    console.log("JWT Token:", client.global.get("jwt_token"));
+%}
+
+### Her henter vi en bruger med en user rolle
+GET http://localhost:7070/api/protected/user_demo/
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
+
+### Her henter vi en bruger med en admin rolle
+GET http://localhost:7070/api/protected/admin_demo/
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
+
+### Her tilføjer vi en admin rolle til brugeren
+POST http://localhost:7070/api/auth/user/addrole/
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+    "role": "admin"
+}
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
+
+### -- Trips API --
+
+### Her fylder vi databasen med data
+GET http://localhost:7070/api/trips/populate
+Content-Type: application/json
+
+### Her henter vi alle trips
+GET http://localhost:7070/api/trips
+Accept: application/json
+
+### Her henter vi en Trip ud fra id på trip
+GET http://localhost:7070/api/trips/10
+Accept: application/json
+
+### Her henter vi trips ud fra type
+GET http://localhost:7070/api/trips/categories/BEACH
+Accept: application/json
+
+### Get itmes from fetch
+GET http://localhost:7070/api/trips/packing-items/BEACH
+
+### Her opretter vi en trip
+POST http://localhost:7070/api/trips
+Content-Type: application/json
+//Authorization: Bearer {{jwt_token}}
+
+{
+    "name": "Tur til Australien",
+    "price": "300",
+    "starttime": "2023-10-01T10:00:00",
+    "endtime": "2023-10-01T18:00:00",
+    "longitude": "133.775136",
+    "latitude": "-25.274398",
+    "category": "BEACH"
+}
+
+### Her opdaterer vi en trip ud fra id på trip
+PUT http://localhost:7070/api/trips/6
+Content-Type: application/json
+//Authorization: Bearer {{jwt_token}}
+
+{
+  "name": "Tur til Australien",
+  "price": "300",
+  "starttime": "2023-10-01T10:00:00",
+  "endtime": "2023-10-01T18:00:00",
+  "longitude": "133.775136",
+  "latitude": "-25.274398",
+  "category": "BEACH"
+}
+
+### Her sletter vi en trip ud fra id
+DELETE http://localhost:7070/api/trips/10
+//Authorization: Bearer {{jwt_token}}
+
